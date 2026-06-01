@@ -1,0 +1,16 @@
+# Dependency folders
+node_modules/
+server/node_modules/
+
+# Secrets and Environment Variables
+.env
+.env.local
+server/.env
+
+# Production builds
+dist/
+build/
+
+# OS trash files
+.DS_Store
+Thumbs.db
