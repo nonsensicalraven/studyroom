@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const authRoutes = require('./routes/authRoutes');
 const cors = require('cors');
 require('dotenv').config(); // This line opens the hidden safe (.env) so the code can read its secrets!
 
@@ -12,8 +13,10 @@ app.use(express.json()); // Allows server to read JSON data sent by users
 
 // A basic "Test Route" to make sure the server is alive
 app.get('/', (req, res) => {
-  res.send('StudyRoom API is up and running smoothly');
+  res.send('StudyRoom API is up and running smoothly!');
 });
+// Direct any traffic going to /api/auth through our authRoutes pipeline
+app.use('/api/auth', authRoutes);
 
 // Connect to the Cloud Vault (MongoDB) using the secret URI from .env file
 mongoose.connect(process.env.MONGO_URI)
