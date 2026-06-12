@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
 const cors = require('cors');
-require('dotenv').config(); // This line opens the hidden safe (.env) so the code can read its secrets!
+require('dotenv').config(); // This line opens the hidden safe (.env) so the code can read its secrets
 
 const app = express();
 const PORT = process.env.PORT || 5000; //if a custom port assigned in .env, use that or else use PORT 5000
