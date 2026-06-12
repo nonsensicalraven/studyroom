@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser } = require('../controllers/authController');
+const { registerUser, loginUser } = require('../controllers/authController');
 
-// This pipe handles: POST requests to /register -> forwards them to registerUser
+// POST /api/auth/register
 router.post('/register', registerUser);
+
+// POST /api/auth/login -> The new pipeline path!
+router.post('/login', loginUser);
 
 module.exports = router;

@@ -57,3 +57,43 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error occurred" });
   }
 };
+
+// Logic for logging in an existing user
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Look up the user by their email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // 2. Compare the incoming plain-text password with the armored hash in MongoDB
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // 3. If credentials match, mint a brand new digital wristband (JWT)
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || 'fallback_secret_key',
+      { expiresIn: '30d' }
+    );
+
+    // 4. Hand the token back to the browser
+    res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error occurred" });
+  }
+};
