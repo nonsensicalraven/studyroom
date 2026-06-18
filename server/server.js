@@ -39,6 +39,12 @@ io.on('connection', (socket) => {
   // This function automatically fires the exact millisecond a user opens your app
   console.log(`Real-Time Wire Active! User connected with ID: ${socket.id}`);
 
+  //Listen for when a frontend client joins a specific room channel
+  socket.on('join_room', (roomCode) => {
+    socket.join(roomCode); // Shoves this user into that private room stream
+    console.log(`🚪 Passport ${socket.id} locked into private room channel: ${roomCode}`);
+  });
+
   // This function fires when a user closes the tab or loses internet connection
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);

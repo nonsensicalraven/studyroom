@@ -1,22 +1,17 @@
 import React, { useEffect } from 'react'
 import Register from './components/Register'
 import Login from './components/Login'
-// 1. Import the socket client tool
+import Lobby from './components/Lobby' // 1. IMPORT THE LOBBY
 import { io } from 'socket.io-client'
 
-// 2. Establish the connection to port 5000
 const socket = io("http://localhost:5000");
 
 function App() {
   
-  // 3. This hook runs once when the app mounts to monitor our connection
   useEffect(() => {
     socket.on("connect", () => {
-      console.log("FRONTEND SUCCESS: Connected to Real-Time Server!");
-      console.log("Your Temporary Socket Passport ID is:", socket.id);
+      console.log("🚀 FRONTEND SUCCESS: Connected to Real-Time Server!");
     });
-
-    // Clean up connection if the user closes the app
     return () => {
       socket.off("connect");
     };
@@ -24,14 +19,21 @@ function App() {
 
   return (
     <div style={{ padding: '40px', fontFamily: 'sans-serif', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
-      <h1 style={{ textAlign: 'center' }}>StudyRoom Arena</h1>
+      <h1 style={{ textAlign: 'center', color: '#222' }}>StudyRoom Arena</h1>
       
       <hr style={{ margin: '30px 0', borderColor: '#eee' }} />
       
+      {/* Existing Auth Setup */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', flexWrap: 'wrap' }}>
         <Register />
         <Login />
       </div>
+
+      <hr style={{ margin: '40px 0', borderColor: '#eee' }} />
+
+      {/* 2. THE VISUAL LOBBY CONTROLS */}
+      <h2 style={{ textAlign: 'center', color: '#333' }}>Dashboard Lobby</h2>
+      <Lobby />
     </div>
   )
 }
