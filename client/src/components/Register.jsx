@@ -1,39 +1,45 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'; // 1. Imported perfectly!
 
 function Register() {
   // 1. React's internal temporary memory (State)
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState('') // state to hold backend responses on screen
+  const [message, setMessage] = useState('')
+
+  const navigate = useNavigate(); // 👇 2. INITIALIZE THE STEERING WHEEL HERE!
 
   // 2. The upgraded backend bridge logic
   const handleSubmit = async (e) => {
-    e.preventDefault() // Prevents the browser from reloading the page
+    e.preventDefault() 
     setMessage('Sending data to the backend engine...')
 
     try {
-      // Shooting a network request straight across the local ports!
       const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, email, password }), // Bundling up our state variables
+        body: JSON.stringify({ username, email, password }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
         localStorage.setItem('studyArenaToken', data.token)
-        setMessage(`Account Created Successfully and saved to LocalStorage!`)
+        setMessage(`Account Created Successfully! Redirecting to login...`)
         console.log("Full Response from Server Vault:", data)
-    } else {
-        // Server error (e.g., Duplicate email)
+        
+        //Automatically redirect them to login after 1.5 seconds!
+        setTimeout(() => {
+          navigate('/login')
+        }, 1500)
+
+      } else {
         setMessage(`Server Rejected Request: ${data.message || 'Unknown Error'}`)
       }
     } catch (error) {
-      // System error (e.g., Backend server isn't running)
       console.error("Network Error:", error)
       setMessage('Could not connect to the backend server. Is your Express app running on port 5000?')
     }
@@ -80,7 +86,16 @@ function Register() {
           Sign Up
         </button>
 
-        {/* 3. Status card showing server updates visually on screen */}
+        <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px', color: '#666' }}>
+          Already have an account?{' '}
+          <span 
+            onClick={() => navigate('/login')} // Now this function actually exists!
+            style={{ color: '#008CBA', cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }}
+          >
+            Sign In here
+          </span>
+        </p>
+
         {message && (
           <p style={{ marginTop: '15px', padding: '10px', backgroundColor: '#e9ecef', borderRadius: '4px', fontSize: '13px', wordBreak: 'break-all', color: '#333', borderLeft: '4px solid #007bff' }}>
             {message}

@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom' // 👇 1. Import the steering wheel
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+  
+  const navigate = useNavigate() //2. Initialize the navigation tool
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -21,10 +24,16 @@ function Login() {
       const data = await response.json()
 
       if (response.ok) {
-        // 💾 Overwriting the pocket memory with the verified user's token!
+        //Overwriting the pocket memory with the verified user's token!
         localStorage.setItem('studyArenaToken', data.token)
         setMessage(`Welcome back, ${data.user.username}! Secure session token saved.`)
         console.log("Logged In Successfully! Response:", data)
+        
+        // 3. TELEPORT THEM TO THE LOBBY INSTANTLY!
+        setTimeout(() => {
+          navigate('/lobby')
+        }, 1500) // Small 1.5-second delay so they can actually read your nice success message!
+
       } else {
         setMessage(`Login Failed: ${data.message || 'Unknown Error'}`)
       }
@@ -63,6 +72,16 @@ function Login() {
         <button type="submit" style={{ width: '100%', padding: '10px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
           Sign In
         </button>
+
+        <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px', color: '#666' }}>
+          Don't have an account?{' '}
+          <span 
+            onClick={() => navigate('/register')} 
+            style={{ color: '#008CBA', cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }}
+          >
+            Sign Up here
+          </span>
+        </p>
 
         {message && (
           <p style={{ marginTop: '15px', padding: '10px', backgroundColor: '#e9ecef', borderRadius: '4px', fontSize: '13px', wordBreak: 'break-all', color: '#333', borderLeft: '4px solid #28a745' }}>

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom' // 👇 Import Router tools
 import Register from './components/Register'
 import Login from './components/Login'
-import Lobby from './components/Lobby' // 1. IMPORT THE LOBBY
+import Lobby from './components/Lobby'
 import { io } from 'socket.io-client'
 
 const socket = io("http://localhost:5000");
@@ -18,23 +19,28 @@ function App() {
   }, []);
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
-      <h1 style={{ textAlign: 'center', color: '#222' }}>StudyRoom Arena</h1>
-      
-      <hr style={{ margin: '30px 0', borderColor: '#eee' }} />
-      
-      {/* Existing Auth Setup */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', flexWrap: 'wrap' }}>
-        <Register />
-        <Login />
+    <BrowserRouter> {/* 🗺️ Gives the entire app access to the routing map */}
+      <div style={{ padding: '40px', fontFamily: 'sans-serif', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+        <h1 style={{ textAlign: 'center', color: '#222' }}>StudyRoom Arena</h1>
+        
+        <hr style={{ margin: '30px 0', borderColor: '#eee' }} />
+        
+        {/* 👇 Define our dynamic page swapping zone */}
+        <Routes>
+          {/* Default Route: Redirects users straight to login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          
+          {/* Dedicated Individual Pages */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/lobby" element={<Lobby />} />
+          
+          {/* Dynamic Room Canvas Workspace (Placeholder for next step) */}
+          <Route path="/room/:roomCode" element={<div style={{ textAlign: 'center', marginTop: '40px' }}><h2>🚪 Live Session Room Loading...</h2></div>} />
+        </Routes>
+
       </div>
-
-      <hr style={{ margin: '40px 0', borderColor: '#eee' }} />
-
-      {/* 2. THE VISUAL LOBBY CONTROLS */}
-      <h2 style={{ textAlign: 'center', color: '#333' }}>Dashboard Lobby</h2>
-      <Lobby />
-    </div>
+    </BrowserRouter>
   )
 }
 
