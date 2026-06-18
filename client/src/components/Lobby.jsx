@@ -6,13 +6,14 @@ function Lobby() {
   const [roomMode, setRoomMode] = useState('focus');
   const [roomName, setRoomName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  
+  const [customInput, setCustomInput] = useState('');
+
   const navigate = useNavigate();
 
   const handleCreateRoom = async (e) => {
     e.preventDefault();
     setErrorMessage('');
-    
+
     // Extract our secure digital keycard from local storage
     const token = localStorage.getItem('studyArenaToken');
     if (!token) {
@@ -27,7 +28,7 @@ function Lobby() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` // Passing the keycard to pass through auth middleware
         },
-        body: JSON.stringify({ name: roomName, mode: roomMode }),
+        body: JSON.stringify({ name: roomName, mode: roomMode, customInput: customInput }),
       });
 
       const data = await response.json();
@@ -120,9 +121,9 @@ function Lobby() {
           <form onSubmit={handleCreateRoom} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>Room Name</label>
-              <input 
-                type="text" 
-                placeholder="e.g., OS Grind Session" 
+              <input
+                type="text"
+                placeholder="e.g., OS Grind Session"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' }}
@@ -132,14 +133,31 @@ function Lobby() {
 
             <div>
               <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>Select Mode</label>
-              <select 
-                value={roomMode} 
+              <select
+                value={roomMode}
                 onChange={(e) => setRoomMode(e.target.value)}
                 style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', backgroundColor: '#fff' }}
               >
-                <option value="focus">🧘 Focus Mode (50 mins)</option>
-                <option value="arena">💻 Arena Mode (LeetCode Sprint)</option>
+                <option value="focus"> Focus Mode (50 mins)</option>
+                <option value="arena"> Arena Mode (LeetCode Sprint)</option>
               </select>
+              {/* Dynamic Field: Only shows up if Arena Mode is chosen */}
+              {roomMode === 'arena' && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold', color: '#ff4d4d' }}>
+                    🔗 LeetCode Problem Link / Topic
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., https://leetcode.com/problems/two-sum"
+                    value={customInput}
+                    onChange={(e) => setCustomInput(e.target.value)}
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ff4d4d', boxSizing: 'border-box' }}
+                    required
+                  />
+                </div>
+              )}
+
             </div>
 
             <button type="submit" style={{
@@ -170,18 +188,18 @@ function Lobby() {
           <form onSubmit={handleJoinRoom} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>Enter 6-Character Code</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 maxLength="6"
-                placeholder="e.g., B38E82" 
+                placeholder="e.g., B38E82"
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value)}
-                style={{ 
-                  width: '100%', 
-                  padding: '10px', 
-                  borderRadius: '6px', 
-                  border: '1px solid #ccc', 
-                  textTransform: 'uppercase', 
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: '1px solid #ccc',
+                  textTransform: 'uppercase',
                   letterSpacing: '2px',
                   textAlign: 'center',
                   fontSize: '18px',

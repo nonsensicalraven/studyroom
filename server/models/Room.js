@@ -28,10 +28,11 @@ const RoomSchema = new mongoose.Schema({
       ref: 'User'
     }
   ],
-  // This is the specific LeetCode link OR the Subject Title
   customInput: {
     type: String,
-    required: true
+    required: function() {
+      return this.mode === 'arena';
+    }
   },
   difficulty: {
     type: String,
@@ -39,8 +40,8 @@ const RoomSchema = new mongoose.Schema({
     default: 'none'
   },
   timerState: {
-    type: Number, // Seconds remaining
-    default: 1500 // Default 25 mins (Focus) or 1200 (Arena)
+    type: Number, 
+    default: 1500 
   },
   phase: {
     type: String,
@@ -54,7 +55,7 @@ const RoomSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 86400 // Automatically delete room after 24 hours (cleanup)
+    expires: 86400 
   }
 });
 
