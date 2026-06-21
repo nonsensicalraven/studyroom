@@ -48,6 +48,14 @@ exports.registerUser = async (req, res) => {
   catch (error) {
     console.error(error);
 
+    // 💡 Catch duplicate field errors from MongoDB (e.g., username index clash)
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Username or email is already taken. Please try another one.' 
+      });
+    }
+
     // If Mongoose validation fails, capture the custom message we wrote in our Schema
     if (error.name === 'ValidationError') {
       const message = Object.values(error.errors).map(val => val.message);

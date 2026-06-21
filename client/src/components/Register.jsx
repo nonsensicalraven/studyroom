@@ -31,7 +31,7 @@ function Register() {
         setMessage(`Account Created Successfully! Redirecting to login...`)
         console.log("Full Response from Server Vault:", data)
         
-        //Automatically redirect them to login after 1.5 seconds!
+        //Automatically redirect them to login after 1.5 seconds
         setTimeout(() => {
           navigate('/login')
         }, 1500)
@@ -89,7 +89,7 @@ function Register() {
         <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px', color: '#666' }}>
           Already have an account?{' '}
           <span 
-            onClick={() => navigate('/login')} // Now this function actually exists!
+            onClick={() => navigate('/login')} 
             style={{ color: '#008CBA', cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }}
           >
             Sign In here

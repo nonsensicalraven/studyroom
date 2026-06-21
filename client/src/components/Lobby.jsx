@@ -26,7 +26,7 @@ function Lobby() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Passing the keycard to pass through auth middleware
+          'Authorization': `Bearer ${token}` // Passing the keycard to pass through auth middleware to retrive the user id to give to the participant field in the vault
         },
         body: JSON.stringify({ name: roomName, mode: roomMode, customInput: customInput }),
       });
@@ -53,7 +53,7 @@ function Lobby() {
 
     const token = localStorage.getItem('studyArenaToken');
     if (!token) {
-      setErrorMessage('Authentication missing. Please re-login.');
+      setErrorMessage('Authentication missing. Please re-login.'); //to get host id to send to auth.js 
       return;
     }
 
@@ -62,7 +62,7 @@ function Lobby() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}` //auth.js decpdes jwt token and gets the user-id back
         },
         body: JSON.stringify({ roomCode: cleanCode }),
       });
@@ -117,13 +117,13 @@ function Lobby() {
           width: '320px',
           border: '1px solid #eef'
         }}>
-          <h3 style={{ marginTop: 0, color: '#333' }}>🚀 Create a Study Room</h3>
+          <h3 style={{ marginTop: 0, color: '#333' }}> Create a Study Room</h3>
           <form onSubmit={handleCreateRoom} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>Room Name</label>
               <input
                 type="text"
-                placeholder="e.g., OS Grind Session"
+                placeholder="e.g., OS Session"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' }}
@@ -144,7 +144,7 @@ function Lobby() {
               {/* Dynamic Field: Only shows up if Arena Mode is chosen */}
               {roomMode === 'arena' && (
                 <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold', color: '#ff4d4d' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold', color: '#0a8eed' }}>
                     🔗 LeetCode Problem Link / Topic
                   </label>
                   <input
@@ -152,7 +152,7 @@ function Lobby() {
                     placeholder="e.g., https://leetcode.com/problems/two-sum"
                     value={customInput}
                     onChange={(e) => setCustomInput(e.target.value)}
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ff4d4d', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #0a8eed', boxSizing: 'border-box' }}
                     required
                   />
                 </div>
@@ -184,7 +184,7 @@ function Lobby() {
           width: '320px',
           border: '1px solid #eef'
         }}>
-          <h3 style={{ marginTop: 0, color: '#333' }}>🔑 Join via Room Code</h3>
+          <h3 style={{ marginTop: 0, color: '#333' }}> Join via Room Code</h3>
           <form onSubmit={handleJoinRoom} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>Enter 6-Character Code</label>

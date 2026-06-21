@@ -1,3 +1,4 @@
+//to extract the user-id from the JWT token when creating rooms
 const jwt = require('jsonwebtoken');
 
 module.exports = function (req, res, next) {

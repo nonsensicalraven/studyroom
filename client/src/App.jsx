@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom' // 👇 Import Router tools
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom' 
 import Register from './components/Register'
 import Login from './components/Login'
 import Lobby from './components/Lobby'
@@ -12,7 +12,7 @@ function App() {
   
   useEffect(() => {
     socket.on("connect", () => {
-      console.log("🚀 FRONTEND SUCCESS: Connected to Real-Time Server!");
+      console.log("FRONTEND SUCCESS: Connected to Real-Time Server!");
     });
     return () => {
       socket.off("connect");
@@ -26,7 +26,7 @@ function App() {
         
         <hr style={{ margin: '30px 0', borderColor: '#eee' }} />
         
-        {/*Define our dynamic page swapping zone */}
+        {}
         <Routes>
           {/* Default Route: Redirects users straight to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// This is the blueprint form for every single user account
+// blueprint form for every single user account
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now // Automatically timestamps when they registered
+    default: Date.now 
   }
 });
 

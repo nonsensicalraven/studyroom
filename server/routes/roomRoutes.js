@@ -5,13 +5,13 @@ const crypto = require('crypto');
 const auth = require('../middleware/auth'); 
 
 // @route   POST /api/rooms/create
-// @desc    Create a new study room
+// Create a new study room
 router.post('/create', auth, async (req, res) => {
   try {
     const { 
       name, 
       mode, 
-      customInput ,
+      customInput,
       difficulty
     } = req.body;
 
@@ -39,20 +39,48 @@ router.post('/create', auth, async (req, res) => {
   }
 });
 
-// @route   GET /api/rooms/:code
-// @desc    Join room by code / Get room state
-router.get('/:code', async (req, res) => {
+// @route   GET /api/rooms/:roomCode
+// Get room state by code
+router.get('/:roomCode', auth, async (req, res) => {
   try {
-    const room = await Room.findOne({ roomCode: req.params.code.toUpperCase() })
+    const room = await Room.findOne({ roomCode: req.params.roomCode.toUpperCase() })
+      .populate('hostId', 'username') // This extracts the username from the User collection
       .populate('participants', 'username');
 
     if (!room) {
-      return res.status(404).json({ message: "Room not found" });
+      return res.status(404).json({ message: 'Room not found' });
     }
 
     res.json(room);
   } catch (err) {
-    res.status(500).json({ message: "Server Error fetching room" });
+    console.error(err);
+    res.status(500).json({ message: 'Server error fetching room' });
+  }
+});
+
+// @route   POST /api/rooms/join
+// Join an existing room via short code
+router.post('/join', auth, async (req, res) => {
+  try {
+    const { roomCode } = req.body;
+    const userId = req.user.id; 
+
+    const room = await Room.findOne({ roomCode: roomCode.toUpperCase() });
+
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found. Check your code!' });
+    }
+
+    if (!room.participants.includes(userId)) {
+      room.participants.push(userId); 
+      await room.save();
+    }
+
+    res.json({ message: 'Joined successfully', roomCode: room.roomCode });
+
+  } catch (err) {
+    console.error("Join Route Error:", err);
+    res.status(500).json({ message: 'Server error while attempting to join room' });
   }
 });
 

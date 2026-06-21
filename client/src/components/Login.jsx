@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom' // 👇 1. Import the steering wheel
+import { useNavigate } from 'react-router-dom' 
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   
-  const navigate = useNavigate() //2. Initialize the navigation tool
+  const navigate = useNavigate() //Initialize the navigation tool
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -26,13 +26,13 @@ function Login() {
       if (response.ok) {
         //Overwriting the pocket memory with the verified user's token!
         localStorage.setItem('studyArenaToken', data.token)
-        setMessage(`Welcome back, ${data.user.username}! Secure session token saved.`)
+        setMessage(`Welcome back, ${data.user.username}!`)
         console.log("Logged In Successfully! Response:", data)
         
-        // 3. TELEPORT THEM TO THE LOBBY INSTANTLY!
+        // TELEPORT THEM TO THE LOBBY INSTANTLY
         setTimeout(() => {
           navigate('/lobby')
-        }, 1500) // Small 1.5-second delay so they can actually read your nice success message!
+        }, 1500) // Small 1.5-second delay to read success message
 
       } else {
         setMessage(`Login Failed: ${data.message || 'Unknown Error'}`)
