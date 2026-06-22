@@ -26,6 +26,10 @@ function Login() {
       if (response.ok) {
         //Overwriting the pocket memory with the verified user's token!
         localStorage.setItem('studyArenaToken', data.token)
+
+        //commit the user profile details directly into localStorage
+        localStorage.setItem('studyArenaUser',JSON.stringify(data.user))
+
         setMessage(`Welcome back, ${data.user.username}!`)
         console.log("Logged In Successfully! Response:", data)
         
