@@ -373,81 +373,68 @@ function Room() {
     const isCurrentUserHost = String(currentUserId) === String(roomData?.hostRawId);
 
     return (
-        <div style={{ maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif', padding: '20px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', fontFamily: 'var(--font-sans)', padding: 'var(--space-5)' }}>
 
-            {/* Error banner: only renders if the REST fetch returned a failure */}
+            {/* Error banner */}
             {errorMessage && (
-                <div style={{ padding: '12px', backgroundColor: '#fff0f0', borderLeft: '5px solid #ff4d4d', borderRadius: '4px', color: '#c33', fontWeight: 'bold', textAlign: 'center', marginBottom: '20px' }}>
+                <div className="sa-banner sa-banner-error" style={{ marginBottom: 'var(--space-5)' }}>
                     {errorMessage}
                 </div>
             )}
 
-            {/* Inline notification banner: replaces alert() for phase transition messages */}
+            {/* Inline notification banner */}
             {notification && (
-                <div style={{ padding: '12px', backgroundColor: '#f0fdf4', borderLeft: '5px solid #4CAF50', borderRadius: '4px', color: '#166534', fontWeight: 'bold', textAlign: 'center', marginBottom: '20px' }}>
+                <div className="sa-banner sa-banner-success" style={{ marginBottom: 'var(--space-5)' }}>
                     {notification}
                 </div>
             )}
 
-            {/* HEADER: room name, mode badge, room code display, and leave button */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#222', color: '#fff', padding: '15px 25px', borderRadius: '8px', marginBottom: '20px' }}>
+            {/* HEADER */}
+            <div className="sa-room-header">
                 <div>
-                    <h2 style={{ margin: 0, fontSize: '22px' }}>{roomData?.name}</h2>
-                    <span style={{ fontSize: '13px', color: '#aaa' }}>
-                        {isCurrentUserHost ? "(You are the Host)" : "(You are a Guest)"}
+                    <h2 className="sa-room-title">{roomData?.name}</h2>
+                    <span className="sa-room-subtitle">
+                        {isCurrentUserHost ? "You are the Host" : "You are a Guest"}
                     </span>
                 </div>
-                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                    <span style={{ backgroundColor: isFocusMode ? '#4CAF50' : '#008CBA', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                <div className="sa-room-header-right">
+                    <span className={`sa-badge ${isFocusMode ? 'sa-badge-focus' : 'sa-badge-arena'}`}>
                         {roomData?.mode} ({currentPhase} phase)
                     </span>
-                    <div style={{ letterSpacing: '1px', background: '#333', padding: '6px 12px', borderRadius: '4px', border: '1px solid #444' }}>
-                        CODE: <strong style={{ color: '#FFD700' }}>{roomCode}</strong>
+                    <div className="sa-room-code">
+                        CODE: <span>{roomCode}</span>
                     </div>
-                    <button onClick={() => navigate('/lobby')} style={{ padding: '6px 12px', background: '#d9534f', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    <button onClick={() => navigate('/lobby')} className="sa-btn sa-btn-danger">
                         Leave
                     </button>
                 </div>
             </div>
 
-            {/* CORE VIEWPORT: sidebar on the left, main workspace on the right */}
-            <div style={{ display: 'flex', gap: '20px', minHeight: '500px' }}>
+            {/* CORE VIEWPORT */}
+            <div style={{ display: 'flex', gap: 'var(--space-5)', minHeight: '500px' }}>
 
-                {/* LEFT SIDEBAR: participant list with live goal badges in Focus mode */}
-                <div style={{ width: '280px', backgroundColor: '#fff', border: '1px solid #eef', borderRadius: '8px', padding: '20px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                {/* LEFT SIDEBAR */}
+                <div className="sa-surface" style={{ width: '280px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                        <h4 style={{ marginTop: 0, borderBottom: '2px solid #f4f4f4', paddingBottom: '10px', color: '#555' }}>
+                        <h4 className="sa-font-medium" style={{ marginTop: 0, borderBottom: '2px solid var(--border-subtle)', paddingBottom: 'var(--space-3)', color: 'var(--text-primary)', marginBottom: 'var(--space-4)' }}>
                             Online Students ({participantsList.length})
                         </h4>
-                        <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+                        <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                             {participantsList.map((user) => {
                                 const evalUserId = user._id || user;
                                 const isUserHost = String(evalUserId) === String(roomData?.hostRawId);
-
-                                // Look up this participant's live goal count from the broadcast map
-                                // undefined means they have not ticked anything yet, so no badge renders
                                 const currentScore = participantGoalMap[evalUserId];
 
                                 return (
-                                    <li key={evalUserId} style={{
-                                        padding: '8px 12px',
-                                        backgroundColor: isUserHost ? '#e8f5e9' : '#f8f9fa',
-                                        borderLeft: isUserHost ? '4px solid #4CAF50' : '4px solid #008CBA',
-                                        borderRadius: '4px',
-                                        marginBottom: '8px',
-                                        fontWeight: 'bold',
-                                        fontSize: '14px',
-                                        color: '#333'
-                                    }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <li key={evalUserId} className={`sa-participant ${isUserHost ? 'sa-participant-host' : ''}`}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                                             <span>
                                                 {user.username || "Student"}
-                                                {isUserHost && <span style={{ fontSize: '11px', color: '#28a745', marginLeft: '5px' }}>(Host)</span>}
+                                                {isUserHost && <span className="sa-participant-host-label">(Host)</span>}
                                             </span>
 
-                                            {/* Goal badge: only shows in Focus mode and only once the user has ticked at least one goal */}
                                             {isFocusMode && currentScore !== undefined && (
-                                                <span style={{ fontSize: '11px', background: '#e0f2fe', color: '#0369a1', padding: '2px 6px', borderRadius: '10px' }}>
+                                                <span className="sa-badge-goal">
                                                     {currentScore}/3
                                                 </span>
                                             )}
@@ -459,34 +446,25 @@ function Room() {
                     </div>
                 </div>
 
-                {/* RIGHT WORKSPACE: timer, host controls, and mode-specific content */}
-                <div style={{ flex: 1, backgroundColor: '#fff', border: '1px solid #eef', borderRadius: '8px', padding: '30px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {/* RIGHT WORKSPACE */}
+                <div className="sa-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-                    {/* Master clock display: red during break to signal discussion time */}
-                    <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                        <h1 style={{ fontSize: '72px', margin: 0, fontFamily: 'monospace', color: isWorkPhase ? '#333' : '#ff5722' }}>
+                    {/* Master clock display */}
+                    <div style={{ marginBottom: 'var(--space-5)', textAlign: 'center' }}>
+                        <h1 className={`sa-timer ${!isWorkPhase ? 'sa-timer-break' : ''}`}>
                             {formatTimer(timeRemaining)}
                         </h1>
-                        <p style={{ color: '#888', margin: '5px 0 0 0', fontSize: '14px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                        <p className="sa-phase-label">
                             {isWorkPhase ? "Session Active - Focus Interval Locked" : "Break Active - Collaboration Open"}
                         </p>
 
-                        {/* Host-only start button: only visible when phase is work and timer is at full duration (idle state) */}
+                        {/* Host-only start button */}
                         {isCurrentUserHost && isWorkPhase && (
                             <button
                                 onClick={handleStartMasterTimer}
                                 disabled={timeRemaining < (roomData?.mode === 'focus' ? 3000 : 1200)}
-                                style={{
-                                    marginTop: '15px',
-                                    padding: '10px 20px',
-                                    background: timeRemaining < (roomData?.mode === 'focus' ? 3000 : 1200) ? '#666' : '#4CAF50',
-                                    color: '#fff',
-                                    border: 'none',
-                                    borderRadius: '5px',
-                                    cursor: timeRemaining < (roomData?.mode === 'focus' ? 3000 : 1200) ? 'not-allowed' : 'pointer',
-                                    fontWeight: 'bold',
-                                    fontSize: '15px'
-                                }}
+                                className="sa-btn sa-btn-primary"
+                                style={{ marginTop: 'var(--space-4)' }}
                             >
                                 {timeRemaining < (roomData?.mode === 'focus' ? 3000 : 1200)
                                     ? "Session in Progress..."
@@ -498,19 +476,25 @@ function Room() {
 
                     <div style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
                         {isFocusMode ? (
-                            // FOCUS MODE: three micro-goal inputs with checkboxes
-                            // Inputs and checkboxes lock during break phase so goals cannot be edited retroactively
+                            /* FOCUS MODE */
                             <div style={{ maxWidth: '600px', width: '100%', margin: '0 auto' }}>
-                                <h3 style={{ textAlign: 'center', color: '#444', marginBottom: '20px' }}>Session Micro-Goals</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                <h3 style={{ textAlign: 'center', color: 'var(--text-primary)', marginBottom: 'var(--space-5)' }}>
+                                    Session Micro-Goals
+                                </h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
                                     {goals.map((goal, index) => (
-                                        <div key={goal.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#fdfdfd', padding: '12px', borderRadius: '6px', border: '1px solid #eaeaea' }}>
+                                        <div key={goal.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', background: 'var(--bg-surface)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
                                             <input
                                                 type="checkbox"
                                                 checked={goal.completed}
                                                 disabled={!isWorkPhase}
                                                 onChange={() => toggleGoalCompletion(goal.id)}
-                                                style={{ width: '20px', height: '20px', cursor: isWorkPhase ? 'pointer' : 'not-allowed' }}
+                                                style={{
+                                                    cursor: isWorkPhase ? 'pointer' : 'not-allowed',
+                                                    width: '20px',
+                                                    height: '20px',
+                                                    flexShrink: 0
+                                                }}
                                             />
                                             <input
                                                 type="text"
@@ -518,31 +502,23 @@ function Room() {
                                                 value={goal.text}
                                                 disabled={!isWorkPhase}
                                                 onChange={(e) => handleGoalTextChange(goal.id, e.target.value)}
-                                                style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px', textDecoration: goal.completed ? 'line-through' : 'none', color: goal.completed ? '#aaa' : '#333', backgroundColor: goal.completed ? '#f5f5f5' : '#fff' }}
+                                                style={{
+                                                    flex: 1,
+                                                    textDecoration: goal.completed ? 'line-through' : 'none',
+                                                    color: goal.completed ? 'var(--text-muted)' : 'var(--text-primary)',
+                                                    backgroundColor: goal.completed ? 'var(--bg-muted)' : 'var(--bg-raised)'
+                                                }}
                                             />
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         ) : (
-                            // ARENA MODE: private scratchpad during work, revealed submissions during break
+                            /* ARENA MODE */
                             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', flex: 1 }}>
-
-                                {/* Problem link panel: renders only if the host provided a URL or problem name when creating the room */}
                                 {roomData?.customInput && (
-                                    <div style={{
-                                        width: '100%',
-                                        backgroundColor: '#f0f9ff',
-                                        border: '1px solid #bae6fd',
-                                        borderRadius: '6px',
-                                        padding: '12px 15px',
-                                        marginBottom: '15px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        boxSizing: 'border-box'
-                                    }}>
-                                        <span style={{ fontSize: '14px', color: '#0369a1', fontWeight: 'bold' }}>
+                                    <div className="sa-challenge-panel">
+                                        <span className="sa-challenge-label">
                                             Target Challenge:
                                         </span>
                                         {roomData.customInput.startsWith('http') ? (
@@ -550,12 +526,12 @@ function Room() {
                                                 href={roomData.customInput}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                style={{ fontSize: '14px', color: '#0284c7', textDecoration: 'underline', fontWeight: 'bold', wordBreak: 'break-all' }}
+                                                className="sa-challenge-link"
                                             >
                                                 {roomData.customInput}
                                             </a>
                                         ) : (
-                                            <span style={{ fontSize: '14px', color: '#334155', fontWeight: 'bold' }}>
+                                            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', fontWeight: 'var(--weight-medium)' }}>
                                                 {roomData.customInput}
                                             </span>
                                         )}
@@ -568,19 +544,24 @@ function Room() {
                                         onChange={(e) => setScratchpadContent(e.target.value)}
                                         disabled={!isWorkPhase}
                                         placeholder={isWorkPhase ? "// Write your approach or paste your logic here..." : "// Session finalized. Scroll down to see everyone's work!"}
-                                        style={{ width: '100%', minHeight: '200px', padding: '15px', fontFamily: 'monospace', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box', backgroundColor: isWorkPhase ? '#fafafa' : '#eee', color: '#333', resize: 'none' }}
+                                        className="sa-scratchpad"
+                                        style={{
+                                            backgroundColor: isWorkPhase ? 'var(--bg-raised)' : 'var(--bg-muted)',
+                                        }}
                                     />
                                 </div>
 
-                                {/* Reveal panel: mounts during break phase and populates as broadcast events arrive */}
+                                {/* Reveal panel */}
                                 {!isWorkPhase && revealedScratchpads.length > 0 && (
-                                    <div style={{ marginTop: '30px', width: '100%' }}>
-                                        <h3 style={{ borderBottom: '2px solid #008CBA', paddingBottom: '10px', color: '#008CBA' }}>Revealed Arena Submissions</h3>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '15px' }}>
+                                    <div style={{ marginTop: 'var(--space-10)', width: '100%' }}>
+                                        <h3 style={{ borderBottom: '2px solid var(--accent)', paddingBottom: 'var(--space-3)', color: 'var(--accent)', marginBottom: 'var(--space-4)' }}>
+                                            Revealed Arena Submissions
+                                        </h3>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
                                             {revealedScratchpads.map((submission) => (
-                                                <div key={submission.userId} style={{ background: '#f4f7f6', borderLeft: '5px solid #008CBA', borderRadius: '4px', padding: '15px' }}>
-                                                    <strong style={{ color: '#333', display: 'block', marginBottom: '8px' }}>{submission.username}</strong>
-                                                    <pre style={{ margin: 0, background: '#222', color: '#fff', padding: '12px', borderRadius: '4px', fontFamily: 'monospace', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
+                                                <div key={submission.userId} className="sa-submission-card">
+                                                    <strong className="sa-submission-author">{submission.username}</strong>
+                                                    <pre style={{ margin: 0, background: 'var(--ctp-text)', color: '#cdd6f4', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', fontFamily: 'var(--font-mono)', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
                                                         {submission.content || "// Left blank"}
                                                     </pre>
                                                 </div>
@@ -591,50 +572,48 @@ function Room() {
                             </div>
                         )}
 
-                        {/* DISCUSSION LOUNGE: mounts automatically when break phase begins
-                            Contains the prompt injector and the live chat relay */}
+                        {/* DISCUSSION LOUNGE */}
                         {!isWorkPhase && (
-                            <div style={{ marginTop: '40px', width: '100%', borderTop: '2px dashed #ddd', paddingTop: '20px' }}>
+                            <div style={{ marginTop: 'var(--space-12)', width: '100%', borderTop: '2px dashed var(--border-medium)', paddingTop: 'var(--space-5)' }}>
 
-                                {/* Prompt injector: pulls from the static array based on mode */}
-                                <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', padding: '15px', borderRadius: '6px', marginBottom: '20px' }}>
-                                    <strong style={{ color: '#166534', display: 'block', marginBottom: '4px' }}>Lounge Prompt</strong>
-                                    <p style={{ margin: 0, color: '#1e293b', fontStyle: 'italic', fontSize: '14px' }}>
+                                {/* Prompt */}
+                                <div className="sa-prompt-box">
+                                    <strong className="sa-prompt-label">Lounge Prompt</strong>
+                                    <p className="sa-prompt-text">
                                         {roomData?.mode === 'arena' ? breakPrompts[2] : breakPrompts[Math.floor(Date.now() / 10000) % 2]}
                                     </p>
                                 </div>
 
-                                {/* Live chat box: messages accumulate in state */}
-                                <div style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' }}>
-                                    <div style={{ background: '#f8fafc', padding: '10px 15px', borderBottom: '1px solid #e2e8f0', fontWeight: 'bold', color: '#475569' }}>
+                                {/* Chat */}
+                                <div className="sa-chat-box">
+                                    <div className="sa-chat-header">
                                         Break Discussion Lounge
                                     </div>
 
-                                    <div style={{ height: '180px', overflowY: 'auto', padding: '15px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <div className="sa-chat-messages">
                                         {loungeMessages.length === 0 ? (
-                                            <div style={{ color: '#94a3b8', fontSize: '14px', textAlign: 'center', marginTop: '60px' }}>
+                                            <div className="sa-chat-empty">
                                                 Lounge is quiet. Answer the prompt above to get things started.
                                             </div>
                                         ) : (
                                             loungeMessages.map((msg) => (
-                                                <div key={msg.id} style={{ fontSize: '14px' }}>
-                                                    <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{msg.username}: </span>
-                                                    <span style={{ color: '#334155' }}>{msg.text}</span>
+                                                <div key={msg.id} className="sa-chat-message">
+                                                    <span className="sa-chat-username">{msg.username}: </span>
+                                                    <span className="sa-chat-text">{msg.text}</span>
                                                 </div>
                                             ))
                                         )}
                                     </div>
 
-                                    {/* Chat input: submit on button click or Enter key via form onSubmit */}
-                                    <form onSubmit={handleSendChatMessage} style={{ display: 'flex', borderTop: '1px solid #e2e8f0' }}>
+                                    <form onSubmit={handleSendChatMessage} className="sa-chat-form">
                                         <input
                                             type="text"
                                             value={typedMessage}
                                             onChange={(e) => setTypedMessage(e.target.value)}
                                             placeholder="Type your reflection and press Enter..."
-                                            style={{ flex: 1, padding: '12px', border: 'none', outline: 'none', fontSize: '14px' }}
+                                            className="sa-chat-input"
                                         />
-                                        <button type="submit" style={{ background: '#0f172a', color: '#fff', padding: '0 20px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
+                                        <button type="submit" className="sa-chat-send">
                                             Send
                                         </button>
                                     </form>

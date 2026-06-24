@@ -14,7 +14,6 @@ function Lobby() {
     e.preventDefault();
     setErrorMessage('');
 
-    // Extract our secure digital keycard from local storage
     const token = localStorage.getItem('studyArenaToken');
     if (!token) {
       setErrorMessage('Authentication missing. Please re-login.');
@@ -26,7 +25,7 @@ function Lobby() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Passing the keycard to pass through auth middleware to retrive the user id to give to the participant field in the vault
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ name: roomName, mode: roomMode, customInput: customInput }),
       });
@@ -35,7 +34,6 @@ function Lobby() {
 
       if (response.ok) {
         console.log("Room initialized successfully in DB:", data);
-        // Teleport user instantly to the dynamic room workspace route
         navigate(`/room/${data.room.roomCode}`);
       } else {
         setErrorMessage(data.message || 'Failed to create room.');
@@ -53,7 +51,7 @@ function Lobby() {
 
     const token = localStorage.getItem('studyArenaToken');
     if (!token) {
-      setErrorMessage('Authentication missing. Please re-login.'); //to get host id to send to auth.js 
+      setErrorMessage('Authentication missing. Please re-login.');
       return;
     }
 
@@ -62,7 +60,7 @@ function Lobby() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` //auth.js decpdes jwt token and gets the user-id back
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ roomCode: cleanCode }),
       });
@@ -71,7 +69,6 @@ function Lobby() {
 
       if (response.ok) {
         console.log("Joined room successfully:", data);
-        // Teleport the guest into the exact same dynamic workspace route
         navigate(`/room/${cleanCode}`);
       } else {
         setErrorMessage(data.message || 'Invalid or expired room code.');
@@ -83,143 +80,94 @@ function Lobby() {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      {/* Dynamic Global Notification Banner */}
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: 'var(--space-5)' }}>
+      {/* Error Banner */}
       {errorMessage && (
-        <div style={{
-          maxWidth: '670px',
-          margin: '0 auto 20px auto',
-          padding: '12px',
-          backgroundColor: '#fff0f0',
-          borderLeft: '5px solid #ff4d4d',
-          borderRadius: '4px',
-          color: '#c33',
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}>
-          ⚠️ {errorMessage}
+        <div className="sa-banner sa-banner-error" style={{ marginBottom: 'var(--space-5)', maxWidth: '670px', margin: '0 auto var(--space-5) auto' }}>
+          {errorMessage}
         </div>
       )}
 
-      <div style={{
-        display: 'flex',
-        gap: '30px',
-        justifyContent: 'center',
-        marginTop: '20px',
-        flexWrap: 'wrap'
-      }}>
-        {/* BOX 1: CREATE A ROOM */}
-        <div style={{
-          backgroundColor: '#fff',
-          padding: '30px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-          width: '320px',
-          border: '1px solid #eef'
-        }}>
-          <h3 style={{ marginTop: 0, color: '#333' }}> Create a Study Room</h3>
-          <form onSubmit={handleCreateRoom} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      {/* Two-Column Layout */}
+      <div className="sa-lobby-grid">
+        
+        {/* CREATE A ROOM CARD */}
+        <div className="sa-lobby-card">
+          <h3>Create a Study Room</h3>
+          <form onSubmit={handleCreateRoom} className="sa-form-group">
+            
             <div>
-              <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>Room Name</label>
+              <label htmlFor="roomName">Room Name</label>
               <input
+                id="roomName"
                 type="text"
                 placeholder="e.g., OS Session"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' }}
                 required
               />
             </div>
 
             <div>
-              <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>Select Mode</label>
+              <label htmlFor="roomMode">Select Mode</label>
               <select
+                id="roomMode"
                 value={roomMode}
                 onChange={(e) => setRoomMode(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', backgroundColor: '#fff' }}
               >
-                <option value="focus"> Focus Mode (50 mins)</option>
-                <option value="arena"> Arena Mode (LeetCode Sprint)</option>
+                <option value="focus">Focus Mode (50 mins)</option>
+                <option value="arena">Arena Mode (LeetCode Sprint)</option>
               </select>
-              {/* Dynamic Field: Only shows up if Arena Mode is chosen */}
-              {roomMode === 'arena' && (
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold', color: '#0a8eed' }}>
-                    🔗 LeetCode Problem Link / Topic
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., https://leetcode.com/problems/two-sum"
-                    value={customInput}
-                    onChange={(e) => setCustomInput(e.target.value)}
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #0a8eed', boxSizing: 'border-box' }}
-                    required
-                  />
-                </div>
-              )}
-
             </div>
 
-            <button type="submit" style={{
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              padding: '12px',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: '0.2s'
-            }}>
+            {/* Conditional: Only shows if Arena Mode is chosen */}
+            {roomMode === 'arena' && (
+              <div>
+                <label htmlFor="customInput">🔗 LeetCode Problem Link / Topic</label>
+                <input
+                  id="customInput"
+                  type="text"
+                  placeholder="e.g., https://leetcode.com/problems/two-sum"
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+
+            <button type="submit" className="sa-btn sa-btn-primary sa-btn-full">
               Generate Live Room
             </button>
           </form>
         </div>
 
-        {/* BOX 2: JOIN A ROOM */}
-        <div style={{
-          backgroundColor: '#fff',
-          padding: '30px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-          width: '320px',
-          border: '1px solid #eef'
-        }}>
-          <h3 style={{ marginTop: 0, color: '#333' }}> Join via Room Code</h3>
-          <form onSubmit={handleJoinRoom} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        {/* JOIN A ROOM CARD */}
+        <div className="sa-lobby-card">
+          <h3>Join via Room Code</h3>
+          <form onSubmit={handleJoinRoom} className="sa-form-group">
+            
             <div>
-              <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>Enter 6-Character Code</label>
+              <label htmlFor="roomCode">Enter 6-Character Code</label>
               <input
+                id="roomCode"
                 type="text"
                 maxLength="6"
                 placeholder="e.g., B38E82"
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value)}
                 style={{
-                  width: '100%',
-                  padding: '10px',
-                  borderRadius: '6px',
-                  border: '1px solid #ccc',
                   textTransform: 'uppercase',
-                  letterSpacing: '2px',
+                  letterSpacing: '0.15em',
                   textAlign: 'center',
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  boxSizing: 'border-box'
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 'var(--text-md)',
+                  fontWeight: 'var(--weight-semibold)',
                 }}
                 required
               />
             </div>
 
-            <button type="submit" style={{
-              backgroundColor: '#008CBA',
-              color: 'white',
-              padding: '12px',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              marginTop: '43px'
-            }}>
+            <button type="submit" className="sa-btn sa-btn-primary sa-btn-full" style={{ marginTop: 'var(--space-4)' }}>
               Enter Arena
             </button>
           </form>

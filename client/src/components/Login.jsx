@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom' 
+import { useNavigate } from 'react-router-dom'
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('') // 'success' or 'error'
   
-  const navigate = useNavigate() //Initialize the navigation tool
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setMessage('Verifying credentials with the backend vault...')
+    setMessageType('info')
 
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
@@ -24,75 +26,82 @@ function Login() {
       const data = await response.json()
 
       if (response.ok) {
-        //Overwriting the pocket memory with the verified user's token!
         localStorage.setItem('studyArenaToken', data.token)
-
-        //commit the user profile details directly into localStorage
-        localStorage.setItem('studyArenaUser',JSON.stringify(data.user))
+        localStorage.setItem('studyArenaUser', JSON.stringify(data.user))
 
         setMessage(`Welcome back, ${data.user.username}!`)
+        setMessageType('success')
         console.log("Logged In Successfully! Response:", data)
         
-        // TELEPORT THEM TO THE LOBBY INSTANTLY
         setTimeout(() => {
           navigate('/lobby')
-        }, 1500) // Small 1.5-second delay to read success message
+        }, 1500)
 
       } else {
         setMessage(`Login Failed: ${data.message || 'Unknown Error'}`)
+        setMessageType('error')
       }
     } catch (error) {
       console.error("Network Error:", error)
       setMessage('Could not connect to the backend server.')
+      setMessageType('error')
     }
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-      <h2>Login to StudyRoom</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Email:</label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-            required
-          />
+    <div className="sa-auth-page">
+      <div className="sa-auth-card">
+        <div className="sa-auth-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your StudyArena account</p>
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Password:</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="sa-form-group">
+            <label htmlFor="email">Email Address</label>
+            <input 
+              id="email"
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+            />
+          </div>
 
-        <button type="submit" style={{ width: '100%', padding: '10px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-          Sign In
-        </button>
+          <div className="sa-form-group">
+            <label htmlFor="password">Password</label>
+            <input 
+              id="password"
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+            />
+          </div>
 
-        <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px', color: '#666' }}>
-          Don't have an account?{' '}
-          <span 
-            onClick={() => navigate('/register')} 
-            style={{ color: '#008CBA', cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }}
-          >
-            Sign Up here
-          </span>
-        </p>
+          <button type="submit" className="sa-btn sa-btn-primary sa-btn-full">
+            Sign In
+          </button>
+        </form>
 
         {message && (
-          <p style={{ marginTop: '15px', padding: '10px', backgroundColor: '#e9ecef', borderRadius: '4px', fontSize: '13px', wordBreak: 'break-all', color: '#333', borderLeft: '4px solid #28a745' }}>
+          <div className={`sa-banner sa-banner-${messageType}`} style={{ marginTop: '20px' }}>
             {message}
-          </p>
+          </div>
         )}
-      </form>
+
+        <div className="sa-auth-footer">
+          Don't have an account?{' '}
+          <a 
+            onClick={() => navigate('/register')}
+            style={{ cursor: 'pointer', color: 'var(--accent)' }}
+          >
+            Create one here
+          </a>
+        </div>
+      </div>
     </div>
   )
 }
