@@ -48,7 +48,7 @@ exports.registerUser = async (req, res) => {
   catch (error) {
     console.error(error);
 
-    // Catch duplicate field errors from MongoDB (like username index clash)
+    // Catch duplicate field errors from MongoDB (e.g., username index clash)
     if (error.code === 11000) {
       return res.status(400).json({ 
         success: false, 
