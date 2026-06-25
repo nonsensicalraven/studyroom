@@ -15,12 +15,15 @@ const server = http.createServer(app);
 // Mount Socket.io on the HTTP server and whitelist the Vite dev client origin
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", /\.vercel\.app$/],
     methods: ["GET", "POST"]
   }
 });
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173", /\.vercel\.app$/],
+  credentials: true
+}));
 app.use(express.json());
 
 app.get('/', (req, res) => {
