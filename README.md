@@ -1,62 +1,79 @@
-# StudyRoom 🚀
+# StudyRoom 
 
-An on-demand, real-time collaborative study platform designed for students to break isolation, build accountability, and learn together. Built with the MERN stack and Socket.io.
+An on-demand, real-time collaborative workspace engineered to cure student isolation, defeat procrastination, and drive academic momentum. Built using the MERN stack and Socket.io, StudyRoom transforms solo study fatigue into synchronized, shared accountability.
 
----
-
-## 💡 The Core Problem
-Studying alone leads to procrastination, lack of focus, and zero accountability. While basic chat apps exist, they don't replicate the energy of a real-world study group or a competitive coding contest. **StudyRoom** bridges this gap by creating synchronized, feature-rich virtual spaces for peers.
-
-## 🌟 Key Features
-
-### 1. ⚔️ Arena Mode (For Coders)
-* **On-Demand Lobbies:** Create a room for a specific topic (e.g., *DSA - Trees*) and invite classmates to join via a room code.
-* **Synchronized Coding Sessions:** Once the host starts the session, a countdown timer ticks down in perfect sync for every user.
-* **Embedded Syntax Highlighting:** Write solutions inside a sleek, premium code editor component (powered by Monaco/CodeMirror) right in the browser.
-* **The Reveal Phase:** Code boxes remain private during the timer to prevent copying. The microsecond the timer hits `00:00`, all inputs lock and everyone's code is revealed simultaneously for peer review.
-
-### 2. ⏱️ Focus Mode (For General Subjects)
-* **Communal Spaces:** Tailored for non-coding topics like Mathematics, Operating Systems prep, or general engineering subjects.
-* **Shared Pomodoro Engine:** A synchronized timer handles focus blocks (e.g., 25 minutes of deep work). Inputs are hidden during focus time to maintain deep concentration.
-* **Break-Time Discussions:** The moment a break triggers, a dedicated discussion board/chat opens automatically so students can share what they accomplished, clear doubts, and collaborate.
+> **Why it exists:** Studying alone leads to a vacuum of motivation, while global platforms feel cold and noisy. StudyRoom provides a distraction-free, private container where peer groups, classmates, or hackathon partners can instantly "lock in" together.
 
 ---
 
-## 🛠️ Tech Stack
+## The Core Unification & Psychology
 
-* **Frontend:** React.js, TailwindCSS, Monaco Editor (or CodeMirror)
-* **Backend:** Node.js, Express.js
-* **Database:** MongoDB (via Mongoose)
-* **Real-Time Engine:** Socket.io (WebSockets)
-* **Authentication:** JSON Web Tokens (JWT) & Bcrypt
+1. **Shared Momentum:** Lobbies are private and on-demand. Simply spin up a space, drop the room code in a WhatsApp group, and sync with your peers instantly.
+2. **The "Exit Ticket" Pattern:** To destroy the awkward social silence that happens during breaks, the system blocks the screen the exact millisecond the timer hits zero. Users must submit a single-sentence "Exit Ticket" (*What did you get stuck on?*), instantly auto-populating the chat so the discussion flows effortlessly.
 
 ---
 
-## 📅 The 30-Day Execution Plan
+## Key Core Features
 
-* **Week 1:** Foundation, MongoDB Setup & User Authentication (JWT)
-* **Week 2:** Room Management APIs & Socket.io Room/Presence Logic
-* **Week 3:** Real-time Core (Synchronized Timers, Monaco Integration, Reveal/Break States)
-* **Week 4:** UI Polishing, Testing, and Deployment (Vercel & Render)
+### 1. Focus Mode (Core Engineering Track)
+* **The Pacing:** A synchronized 50-minute deep work block followed by a 10-minute break lounge.
+* **The Dopamine Goal Tracker:** Before the 50-minute Pomodoro engine kicks off, users must declare exactly **three micro-goals**. 
+* **The Reveal:** At `00:00`, everyone's goal progression ($1/3$, $3/3$) is unmasked globally, turning peer comparison into positive motivational fuel.
+
+### 2. Arena Mode (The Logic/Interview Sprint)
+* **The Pacing:** A sharp, high-intensity 20-minute algorithmic sprint followed by a 5-minute break lounge.
+* **LeetCode/GFG Integration:** The room host drops a direct problem link so users can code and compile directly on platforms.
+* **The Locked Scratchpad:** While users code and compile directly on the official platform, the scratchpad acts as a private vault for thoughts, logic, or code blocks. The workspace locks and unmasks everyone's approaches simultaneously at zero hour for code review.
+
+### 3. Real-Time Engine
+* **Server-Driven Truth:** Timers are calculated on the Express server and broadcasted via WebSockets to prevent client-side background tab drift.
+* **Host Transference:** Complete room lifecycle management—if the room creator leaves mid-session, the control console seamlessly transfers to another active peer without dropping the session state or interrupting the countdown.
 
 ---
 
-## ⚙️ Local Setup (Backend Baseline)
+## Tech Stack & Architecture
 
-1. Clone the repository:
-   ```bash
-   git clone git@github.com:YOUR_GITHUB_USERNAME/studyroom.git
-   cd studyroom/server
+* **Frontend:** React.js (Vite), React Router DOM, Custom Context State
+* **Backend:** Node.js, Express.js 
+* **Real-Time Layer:** Socket.io (Isolated Room Channeling, Real-Time Events).
+* **Database:** MongoDB Atlas & Mongoose
+* **Security Engine:** JSON Web Tokens (JWT)  & Bcrypt password hashing
 
-2. Install dependencies:
-    ```bash
-    npm install
+---
 
-3. Configure your environment variables:
-    create a .env file in the server directory:
-    PORT=5000
-    MONGO_URI=your_mongodb_connection_string
+## Future Scope & Roadmap
 
-4. Run the server:
-    ```bash
-    npm run dev
+Features planned for Version 2 to expand the ecosystem:
+* **Custom Pacing Controls:** Allow the room host to select custom session/break durations.
+* **Difficulty & Topic Tags:** Add `Easy`, `Medium`, and `Hard` filtering badges to Arena lobbies.
+* **Dynamic Prompt Pools:** Expand the automated break lounge questions into diverse categories (conceptual, technical, motivational).
+* **Persistent Personal Streaks:** A localized visual streak engine to track consecutive days of completed study blocks.
+
+---
+
+## Local Setup & Installation
+
+```bash
+# 1. Clone the repository and navigate into it
+git clone [https://github.com/nonsensicalraven/studyroom.git](https://github.com/nonsensicalraven/studyroom.git)
+cd StudyRoom
+
+# 2. Setup and start the backend server
+cd server
+npm install
+# (Make sure to create a .env file here with PORT=5000, MONGO_URI, and JWT_SECRET)
+npm start
+
+# 3. Setup and start the frontend client (Run this in a separate terminal window at the root folder)
+cd client
+npm install
+npm run dev
+```
+
+## What I Learned 
+
+Building this solo as a Full-Stack Product Engineer over a 24-day sprint taught me lessons that tutorials can never replicate:
+* **Product vs. Developer Tension:** Learned to brutally cut features (like full in-browser code execution) to prioritize a bulletproof, frictionless user experience.
+* **Managing Socket Lifecycles:** Overcame the "Ghost User" problem by handling tricky disconnect edge cases and automated host transference when connection drops occur.
+* **Real-Time Client-Server Sync:** Solved the background-tab timer drift problem by establishing the backend server as the absolute, immutable source of truth for time tracking.
+* **Full-Stack Independence:** Navigated the full pipeline of a live web application—functioning simultaneously as the frontend engineer, backend developer, and system architect.
