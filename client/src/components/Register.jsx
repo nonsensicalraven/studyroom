@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { API_BASE_URL } from '../config';
 
 function Register() {
   const [username, setUsername] = useState('')
@@ -16,7 +17,7 @@ function Register() {
     setMessageType('info')
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch('${API_BASE_URL}/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ function Register() {
       }
     } catch (error) {
       console.error("Network Error:", error)
-      setMessage('Could not connect to the backend server. Is your Express app running on port 5000?')
+      setMessage('Could not connect to the backend server.')
       setMessageType('error')
     }
   }

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import { API_BASE_URL } from '../config';
 
 // Single shared socket instance created at module level
 // This prevents a new socket connection from spawning on every re-render
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
 function Room() {
     const { roomCode } = useParams();
@@ -70,7 +71,7 @@ function Room() {
     const refreshParticipants = async () => {
         try {
             const token = localStorage.getItem('studyArenaToken');
-            const response = await fetch(`http://localhost:5000/api/rooms/${roomCode}`, {
+            const response = await fetch(`${API_BASE_URL}/api/rooms/${roomCode}`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -106,7 +107,7 @@ function Room() {
                 if (parsed.username) setCurrentUsername(parsed.username);
             }
 
-            const response = await fetch(`http://localhost:5000/api/rooms/${roomCode}`, {
+            const response = await fetch(`${API_BASE_URL}/api/rooms/${roomCode}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
