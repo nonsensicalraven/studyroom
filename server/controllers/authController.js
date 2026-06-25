@@ -48,7 +48,7 @@ exports.registerUser = async (req, res) => {
   catch (error) {
     console.error(error);
 
-    // 💡 Catch duplicate field errors from MongoDB (e.g., username index clash)
+    // Catch duplicate field errors from MongoDB (like username index clash)
     if (error.code === 11000) {
       return res.status(400).json({ 
         success: false, 
@@ -56,7 +56,7 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    // If Mongoose validation fails, capture the custom message we wrote in our Schema
+    // If Mongoose validation fails, capture the custom message in our Schema
     if (error.name === 'ValidationError') {
       const message = Object.values(error.errors).map(val => val.message);
       return res.status(400).json({ success: false, message: message[0] });
@@ -77,7 +77,7 @@ exports.loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // 2. Compare the incoming plain-text password with the armored hash in MongoDB
+    // 2. Compare the incoming plain-text password with the hash in MongoDB
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
