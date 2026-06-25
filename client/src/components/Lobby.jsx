@@ -22,7 +22,7 @@ function Lobby() {
     }
 
     try {
-      const response = await fetch('${API_BASE_URL}/api/rooms/create', {
+      const response = await fetch(`${API_BASE_URL}/api/rooms/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ function Lobby() {
     }
 
     try {
-      const response = await fetch('${API_BASE_URL}/api/rooms/join', {
+      const response = await fetch(`${API_BASE_URL}/api/rooms/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
